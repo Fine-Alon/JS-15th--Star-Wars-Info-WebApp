@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-  let cyrillicPattern = /^[а-яА-Я\s\-]+$/
+  const CYRILLIC_PATTERN = /^[а-яА-Я\s\-]+$/
+  let currentText = ''
+
   const isValidKey = (key) => {
     return key === 'Backspace' ||
       key === 'Enter' ||
@@ -10,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const validateInput = (str) => {
     let trimmedValue = str.trim();
+    trimmedValue = trimmedValue.replace(/^[-]+|[-]+$/,'')
 
     // Replace consecutive whitespace characters with a single space
     let replacedSpaces = trimmedValue.replace(/\s+/g, ' ');
@@ -23,39 +26,33 @@ document.addEventListener('DOMContentLoaded', () => {
     return validatedValue;
   }
 
-
   window.addEventListener('keydown', event => {
 
-
-    const firstName = document.querySelector('.first_name')
-    const lastName = document.querySelector('.last_name')
-
-    const inputs = [firstName, lastName]
-    inputs.forEach(input => {
-
-      let currentText = ''
-
-      // check if current key accords to pattern,then allows it to be input in field, else prevent this.
-      if (isValidKey(event.key) || cyrillicPattern.test(event.key)) {
-        if (event.key === 'Backspace') {
-          currentText = currentText.slice(0, -1)
-        }
-        if (!isValidKey(event.key)) {
-          currentText = currentText.concat('', event.key)
-        }
-        // console.log('currentText:', currentText)
-      } else {
-        event.preventDefault()
+    // check if current key accords to pattern,then allows it to be input in field, else prevent this.
+    if (isValidKey(event.key) || CYRILLIC_PATTERN.test(event.key)) {
+      if (event.key === 'Backspace') {
+        currentText = currentText.slice(0, -1)
+      }
+      if (!isValidKey(event.key)) {
+        currentText = currentText.concat('', event.key)
       }
 
-      input.addEventListener('blur', event => {
-        console.log('1-', currentText)
-        currentText = validateInput(currentText)
-        console.log('2-', currentText)
+      // console.log('currentText:', currentText)
+    } else event.preventDefault()
 
-      })
-    })
   }, true)
 
+
+  const inputs = document.querySelectorAll('.js_input')
+  inputs.forEach(input => {
+
+    input.addEventListener('blur', event => {
+      // get input under validate
+      currentText = validateInput(currentText)
+      //change input value to valid value
+      event.target.value = currentText
+
+    })
+  })
 
 })
