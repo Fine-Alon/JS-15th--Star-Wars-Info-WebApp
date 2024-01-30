@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const validateInput = (str) => {
     let trimmedValue = str.trim();
-    trimmedValue = trimmedValue.replace(/^[-]+|[-]+$/,'')
+    trimmedValue = trimmedValue.replace(/^[-]+|[-]+$/, '')
 
     // Replace consecutive whitespace characters with a single space
     let replacedSpaces = trimmedValue.replace(/\s+/g, ' ');
@@ -42,16 +42,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
   }, true)
 
-
   const inputs = document.querySelectorAll('.js_input')
   inputs.forEach(input => {
 
     input.addEventListener('blur', event => {
       // get input under validate
-      currentText = validateInput(currentText)
+      currentText = validateInput(input.value)
+
       //change input value to valid value
       event.target.value = currentText
+      console.log(input.value)
+      console.log(event.target.value)
 
+      currentText = ''
+
+    })
+  })
+
+  // form & submit
+  const form = document.querySelector('form')
+  form.addEventListener('submit', event => {
+    event.preventDefault()
+    const p = document.createElement('p')
+
+    form.querySelectorAll('.js_input').forEach(input => {
+      // concat name + surname
+      p.textContent = p.textContent + ' ' + input.value
+
+      // past a paragraph after form
+      if (input.value){
+        form.parentNode.insertBefore(p, form.nextSibling)
+      }
+
+      //   refresh input value
+      input.value = ''
     })
   })
 
