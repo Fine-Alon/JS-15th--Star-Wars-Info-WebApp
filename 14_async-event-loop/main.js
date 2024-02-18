@@ -34,24 +34,41 @@ const loadResource = async (src) => {
 
   //Api
   return SWApi(src);
-  // .then(res => res.json())
-  // .then(res => res.results);
 };
 
 const appContainer = document.getElementById('app');
 
-Promise.all([
-  './js_modules/components.js',
-  'films',
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'
-]
-  .map(src => loadResource(src)))
-  .then(([moduleJS, moduleApi, moduleCSS]) => {
-      appContainer.innerHTML = '';
-      appContainer.append(moduleJS.createMainPage(moduleApi)
-      );
-    }
-  );
+const searchParams = new URLSearchParams(window.location.search);
+
+const episodeID = searchParams.get('id');
+
+if (episodeID) {
+  Promise.all([
+    './js_modules/components.js',
+    `films/${episodeID}`,
+    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'
+  ]
+    .map(src => loadResource(src)))
+    .then(([moduleJS, moduleApi, moduleCSS]) => {
+        appContainer.innerHTML = '';
+        appContainer.append(moduleJS.createDetailPage(moduleApi,episodeID)
+        );
+      }
+    );
+} else {
+  Promise.all([
+    './js_modules/components.js',
+    'films',
+    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'
+  ]
+    .map(src => loadResource(src)))
+    .then(([moduleJS, moduleApi, moduleCSS]) => {
+        appContainer.innerHTML = '';
+        appContainer.append(moduleJS.createMainPage(moduleApi)
+        );
+      }
+    );
+}
 
 
 

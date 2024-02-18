@@ -23,7 +23,8 @@ const createEpisodeCard = (obj, pic) => {
   cardTitle.textContent = `film ${obj.episode_id}: ${obj.title}`;
 
   link.classList.add('btn', 'btn-dark');
-  link.href = `${starWarsURL}films/${obj.episode_id}`;
+  // link.href = `${starWarsURL}films/${obj.episode_id}`;
+  link.href = `?id=${obj.episode_id}`;
   link.textContent = `More info about episode ${obj.episode_id}`;
 
   cardBody.append(cardTitle, link);
@@ -54,7 +55,7 @@ const createMainPage = (arr) => {
   return page;
 };
 
-const createDetailPage = (obj,pic) => {
+const createDetailPage = (obj,episodeNum) => {
 
   const card = document.createElement('div');
   const img = document.createElement('img');
@@ -69,7 +70,7 @@ const createDetailPage = (obj,pic) => {
   img.classList.add('card-img-top');
   img.style.maxWidth = '100%';
 
-  img.src = pic
+  img.src = imgArrSW[episodeNum]
   img.alt = `Star Wars: ${obj.title}`;
 
   cardBody.classList.add('card-body');
