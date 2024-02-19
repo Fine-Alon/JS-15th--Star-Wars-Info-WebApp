@@ -1,5 +1,4 @@
-import { SWApi } from './js_modules/serverApi.js';
-import { lazyLoad } from './js_modules/helpers.js';
+import { SWApi } from './serverApi.js';
 
 let cssPromises = {};
 // can be load dynamically CSS or JS or API
@@ -37,32 +36,17 @@ const loadResource = async (src) => {
   return SWApi(src);
 };
 
-const appContainer = document.getElementById('app');
+const lazyLoad = (js, api, css, renderFncName,box) => {
 
-const searchParams = new URLSearchParams(window.location.search);
+  Promise.all([js, api, css]
+    .map(src => loadResource(src)))
+    .then(async ([moduleJS, moduleApi]) => {
+        // moduleApi._backToHomePage = homeHref;
+      box.innerHTML = '';
+      box.append(await moduleJS[renderFncName](moduleApi)
+        );
+      }
+    );
+};
 
-const homeHref = window.location.href;
-
-window._homeHref = homeHref;
-
-const episodeID = searchParams.get('id');
-
-if (episodeID) {
-  lazyLoad(
-    './components.js',
-    `films/${episodeID}`,
-    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
-    'createDetailPage',appContainer
-  );
-} else {
-  lazyLoad(
-    './components.js',
-    'films',
-    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
-    'createMainPage',appContainer
-  );
-}
-
-
-
-
+export { loadResource , lazyLoad};

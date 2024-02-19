@@ -1,6 +1,6 @@
-import { imgArrSW, starWarsURL } from './serverApi.js';
+import { imgArrSW, starWarsURL, SWApi } from './serverApi.js';
 
-const createEpisodeCard = (obj, pic) => {
+const createEpisodeCard = (obj) => {
 
   const card = document.createElement('div');
   const img = document.createElement('img');
@@ -14,7 +14,7 @@ const createEpisodeCard = (obj, pic) => {
   img.classList.add('card-img-top');
   img.style.maxWidth = '100%';
 
-  img.src = pic;
+  img.src = imgArrSW[obj.episode_id - 1];
   img.alt = `Star Wars: ${obj.title}`;
 
   cardBody.classList.add('card-body');
@@ -23,8 +23,7 @@ const createEpisodeCard = (obj, pic) => {
   cardTitle.textContent = `film ${obj.episode_id}: ${obj.title}`;
 
   link.classList.add('btn', 'btn-dark');
-  // link.href = `${starWarsURL}films/${obj.episode_id}`;
-  link.href = `?id=${obj.episode_id}`;
+  link.href = `?id=${obj.url[obj.url.length - 2]}`;
   link.textContent = `More info about episode ${obj.episode_id}`;
 
   cardBody.append(cardTitle, link);
@@ -46,34 +45,40 @@ const createMainPage = (arr) => {
 
   wrapper.append(title);
   page.append(wrapper);
-  for (let episode = 0; episode < arr.length; episode++) {
 
-    const card = createEpisodeCard(arr[episode], imgArrSW[episode]);
+  for (const episode of arr) {
+    const card = createEpisodeCard(episode);
     page.append(card);
   }
 
   return page;
 };
 
-const createDetailPage = (obj,episodeNum) => {
-
+const createDetailPage = async (obj) => {
+  const сontainer = document.createElement('div');
   const card = document.createElement('div');
+  const description = document.createElement('div');
   const img = document.createElement('img');
   const cardBody = document.createElement('div');
   const cardTitle = document.createElement('h1');
-  const link = document.createElement('button');
+  const link = document.createElement('a');
   const p = document.createElement('p');
 
-  card.classList.add('card', 'mb-5');
-  card.style.width = '26%';
+  сontainer.classList.add('container', 'd-flex', 'justify-content-around');
+  description.classList.add('d-flex', 'flex-column', 'flex-wrap', 'justify-content-around');
+  description.style.maxHeight = '100vh';
+
+  card.classList.add('card');
+  card.style.maxWidth = '50%';
 
   img.classList.add('card-img-top');
   img.style.maxWidth = '100%';
-
-  img.src = imgArrSW[episodeNum]
+  img.style.maxHeight = '70%';
+  img.src = imgArrSW[obj.episode_id - 1];
   img.alt = `Star Wars: ${obj.title}`;
 
   cardBody.classList.add('card-body');
+  cardBody.style.maxHeight = '30%';
 
   cardTitle.classList.add('card-title');
   cardTitle.textContent = `film ${obj.episode_id}: ${obj.title}`;
@@ -82,13 +87,56 @@ const createDetailPage = (obj,episodeNum) => {
   p.textContent = obj.opening_crawl;
 
   link.classList.add('btn', 'btn-dark');
-  link.href = `${starWarsURL}films/${obj.episode_id}`;
+  // console.log(window._homeHref);
+
+  link.href = obj._backToHomePage;
   link.textContent = `Back to episodes`;
 
-  cardBody.append(cardTitle, link);
+  description.append(
+    await createDescrList(obj, 'planets'),
+    await createDescrList(obj, 'species'),
+    await createDescrList(obj, 'characters'),
+    await createDescrList(obj, 'starships'),
+    await createDescrList(obj, 'vehicles')
+  );
+  cardBody.append(cardTitle, p, link);
   card.append(img, cardBody);
+  сontainer.append(card, description);
 
-  return card;
+  return сontainer;
 };
 
-export { createMainPage, createEpisodeCard, createDetailPage };
+const createDescrList = async (obj, type) => {
+  let descrArr = [];
+
+  const box = document.createElement('div');
+  const list = document.createElement('ul');
+  const header = document.createElement('h2');
+  /*
+  const rotation_period = document.createElement('p');
+  const orbital_period = document.createElement('p');
+  const diameter = document.createElement('p');
+  const climate = document.createElement('p');
+  const gravity = document.createElement('p');
+  const terrain = document.createElement('p');
+  const surface_water = document.createElement('p');
+  const population = document.createElement('p'); */
+  box.style.padding = '15px';
+  header.textContent = type.toUpperCase();
+
+  for (const el of obj[type]) {
+    descrArr.push(await SWApi(el));
+  }
+
+  descrArr.forEach(item => {
+    const name = document.createElement('li');
+    name.textContent = item.name;
+    list.append(name);
+  });
+
+  box.append(header, list);
+
+  return box;
+};
+
+export { createMainPage, createEpisodeCard, createDetailPage, createDescrList };
