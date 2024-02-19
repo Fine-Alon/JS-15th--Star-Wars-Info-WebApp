@@ -1,4 +1,5 @@
-import { imgArrSW, starWarsURL, SWApi } from './serverApi.js';
+import { imgArrSW, SWApi } from './serverApi.js';
+import { getHomeURL } from './helpers.js';
 
 const createEpisodeCard = (obj) => {
 
@@ -86,10 +87,9 @@ const createDetailPage = async (obj) => {
   p.classList.add('card-text');
   p.textContent = obj.opening_crawl;
 
-  link.classList.add('btn', 'btn-dark');
-  // console.log(window._homeHref);
+  link.classList.add('btn', 'btn-dark')
 
-  link.href = obj._backToHomePage;
+  link.href = getHomeURL();
   link.textContent = `Back to episodes`;
 
   description.append(

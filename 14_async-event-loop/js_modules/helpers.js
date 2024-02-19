@@ -1,6 +1,7 @@
 import { SWApi } from './serverApi.js';
 
 let cssPromises = {};
+
 // can be load dynamically CSS or JS or API
 const loadResource = async (src) => {
 
@@ -36,17 +37,24 @@ const loadResource = async (src) => {
   return SWApi(src);
 };
 
-const lazyLoad = (js, api, css, renderFncName,box) => {
+const lazyLoad = (js, api, css, renderFncName, box) => {
 
   Promise.all([js, api, css]
     .map(src => loadResource(src)))
     .then(async ([moduleJS, moduleApi]) => {
         // moduleApi._backToHomePage = homeHref;
-      box.innerHTML = '';
-      box.append(await moduleJS[renderFncName](moduleApi)
+        box.innerHTML = '';
+        box.append(await moduleJS[renderFncName](moduleApi)
         );
       }
     );
 };
 
-export { loadResource , lazyLoad};
+const getHomeURL = () => {
+
+  const homeHref = new URL(window.location.href);
+
+  return homeHref.origin + homeHref.pathname;
+};
+
+export { loadResource, lazyLoad, getHomeURL };
