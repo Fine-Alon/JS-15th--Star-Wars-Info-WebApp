@@ -1,5 +1,5 @@
 import { imgArrSW, SWApi } from './serverApi.js';
-import { getHomeURL } from './helpers.js';
+import { getHomeURL, lazyLoadById } from './helpers.js';
 
 const createEpisodeCard = (obj) => {
 
@@ -26,6 +26,18 @@ const createEpisodeCard = (obj) => {
   link.classList.add('btn', 'btn-dark');
   link.href = `?id=${obj.url[obj.url.length - 2]}`;
   link.textContent = `More info about episode ${obj.episode_id}`;
+
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    let url = e.target.getAttribute('href');
+
+    console.log(url);
+
+    history.pushState(null, '', url);
+
+    lazyLoadById();
+  });
 
   cardBody.append(cardTitle, link);
   card.append(img, cardBody);
@@ -87,8 +99,19 @@ const createDetailPage = async (obj) => {
   p.classList.add('card-text');
   p.textContent = obj.opening_crawl;
 
-  link.classList.add('btn', 'btn-dark')
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
 
+    let url = e.target.getAttribute('href');
+
+    console.log(url);
+
+    history.pushState(null, '', url);
+
+    lazyLoadById();
+  });
+
+  link.classList.add('btn', 'btn-dark');
   link.href = getHomeURL();
   link.textContent = `Back to episodes`;
 

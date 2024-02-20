@@ -4,7 +4,6 @@ let cssPromises = {};
 
 // can be load dynamically CSS or JS or API
 const loadResource = async (src) => {
-
   //CSS
   if (!cssPromises[src]) {
     if (src.endsWith('.css')) {
@@ -42,12 +41,35 @@ const lazyLoad = (js, api, css, renderFncName, box) => {
   Promise.all([js, api, css]
     .map(src => loadResource(src)))
     .then(async ([moduleJS, moduleApi]) => {
-        // moduleApi._backToHomePage = homeHref;
         box.innerHTML = '';
         box.append(await moduleJS[renderFncName](moduleApi)
         );
       }
     );
+};
+
+const lazyLoadById = () => {
+  const appContainer = document.getElementById('app');
+
+  const searchParams = new URLSearchParams(window.location.search);
+
+  const episodeID = searchParams.get('id');
+
+  if (episodeID) {
+    lazyLoad(
+      './components.js',
+      `films/${episodeID}`,
+      'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
+      'createDetailPage', appContainer
+    );
+  } else {
+    lazyLoad(
+      './components.js',
+      'films',
+      'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
+      'createMainPage', appContainer
+    );
+  }
 };
 
 const getHomeURL = () => {
@@ -57,4 +79,4 @@ const getHomeURL = () => {
   return homeHref.origin + homeHref.pathname;
 };
 
-export { loadResource, lazyLoad, getHomeURL };
+export { loadResource, lazyLoad, getHomeURL, lazyLoadById };

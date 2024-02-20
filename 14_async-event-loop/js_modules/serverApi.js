@@ -27,6 +27,6 @@ const SWApi = (endPoint) => {
       .then(res => res.json())
       .then(res => res.results);
   }
-}
+};
 
 export { SWApi, starWarsURL, imgArrSW };
