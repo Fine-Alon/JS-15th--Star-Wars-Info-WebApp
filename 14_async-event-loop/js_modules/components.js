@@ -32,8 +32,6 @@ const createEpisodeCard = (obj) => {
 
     let url = e.target.getAttribute('href');
 
-    console.log(url);
-
     history.pushState(null, '', url);
 
     lazyLoadById();
@@ -103,8 +101,6 @@ const createDetailPage = async (obj) => {
     e.preventDefault();
 
     let url = e.target.getAttribute('href');
-
-    console.log(url);
 
     history.pushState(null, '', url);
 

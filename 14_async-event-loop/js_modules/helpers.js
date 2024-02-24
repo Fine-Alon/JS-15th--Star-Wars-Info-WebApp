@@ -4,9 +4,11 @@ let cssPromises = {};
 
 // can be load dynamically CSS or JS or API
 const loadResource = async (src) => {
+
   //CSS
-  if (!cssPromises[src]) {
-    if (src.endsWith('.css')) {
+  if (src.endsWith('.css')) {
+    if (cssPromises[src]) return;
+    if (!cssPromises[src]) {
 
       const link = document.createElement('link');
       link.rel = 'stylesheet';
