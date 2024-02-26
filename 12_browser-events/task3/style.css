@@ -1,0 +1,10 @@
+.text_box {
+  width: 70%;
+}
+
+.btn_css {
+  display: none;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+}
