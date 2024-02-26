@@ -1,10 +1,16 @@
-import { SWApi } from './serverApi.js';
+import {SWApi} from './serverApi.js';
 
+
+const spinner = document.querySelector('.spinner')
+// const app = document.getElementById('app')
 let cssPromises = {};
+
+// app.length < 1
+//   ? spinner.style.display = 'block'
+//   : spinner.style.display = 'none'
 
 // can be load dynamically CSS or JS or API
 const loadResource = async (src) => {
-
   //CSS
   if (src.endsWith('.css')) {
     if (cssPromises[src]) return;
@@ -36,9 +42,11 @@ const loadResource = async (src) => {
 
   //Api
   return SWApi(src);
-};
+}
+
 
 const lazyLoad = (js, api, css, renderFncName, box) => {
+  spinner.style.display = 'block'
 
   Promise.all([js, api, css]
     .map(src => loadResource(src)))
@@ -47,8 +55,11 @@ const lazyLoad = (js, api, css, renderFncName, box) => {
         box.append(await moduleJS[renderFncName](moduleApi)
         );
       }
-    );
-};
+    ).finally(() => {
+      spinner.style.display = 'none'
+    }
+  )
+}
 
 const lazyLoadById = () => {
   const appContainer = document.getElementById('app');
@@ -56,6 +67,7 @@ const lazyLoadById = () => {
   const searchParams = new URLSearchParams(window.location.search);
 
   const episodeID = searchParams.get('id');
+
 
   lazyLoad(
     './components.js',
@@ -73,4 +85,4 @@ const getHomeURL = () => {
   return homeHref.origin + homeHref.pathname;
 };
 
-export { loadResource, lazyLoad, getHomeURL, lazyLoadById };
+export {loadResource, lazyLoad, getHomeURL, lazyLoadById};

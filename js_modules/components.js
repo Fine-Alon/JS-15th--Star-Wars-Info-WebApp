@@ -1,5 +1,22 @@
-import { imgArrSW, SWApi } from './serverApi.js';
-import { getHomeURL, lazyLoadById } from './helpers.js';
+import {imgArrSW, SWApi} from './serverApi.js';
+import {getHomeURL, lazyLoadById} from './helpers.js';
+
+const createSpinner = () => {
+  const spinnerBox = document.createElement('div');
+  const innerBox = document.createElement('div');
+  const load = document.createElement('span');
+
+  spinnerBox.classList.add('text-center')
+  innerBox.classList.add('spinner-border')
+  innerBox.role = 'status'
+  load.textContent = 'Loading...'
+  load.classList.add('visually-hidden')
+
+  innerBox.append(load)
+  spinnerBox.append(innerBox)
+
+  return spinnerBox
+}
 
 const createEpisodeCard = (obj) => {
 
@@ -104,7 +121,7 @@ const createDetailPage = async (obj) => {
 
     history.pushState(null, '', url);
 
-    lazyLoadById();
+    lazyLoadById()
   });
 
   link.classList.add('btn', 'btn-dark');
@@ -131,15 +148,6 @@ const createDescrList = async (obj, type) => {
   const box = document.createElement('div');
   const list = document.createElement('ul');
   const header = document.createElement('h2');
-  /*
-  const rotation_period = document.createElement('p');
-  const orbital_period = document.createElement('p');
-  const diameter = document.createElement('p');
-  const climate = document.createElement('p');
-  const gravity = document.createElement('p');
-  const terrain = document.createElement('p');
-  const surface_water = document.createElement('p');
-  const population = document.createElement('p'); */
   box.style.padding = '15px';
   header.textContent = type.toUpperCase();
 
@@ -158,4 +166,4 @@ const createDescrList = async (obj, type) => {
   return box;
 };
 
-export { createMainPage, createEpisodeCard, createDetailPage, createDescrList };
+export {createMainPage, createEpisodeCard, createDetailPage, createDescrList, createSpinner};
